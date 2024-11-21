@@ -162,5 +162,5 @@ Xsol2 = lm_search_result.solutions(:,end);
 
 %% Compile and plot result
 
-result_best_lm = multiq_compile_result(sample,series,Xsol,qs,delays,fit_eval_delays,s,T,fit_eval_T,w,q_deps,time_deps,g2s,g2errs,delay_norm,q_norm);
+result_best_lm = multiq_compile_result(sample,series,Xsol2,qs,delays,fit_eval_delays,s,T,fit_eval_T,w,q_deps,time_deps,g2s,g2errs,delay_norm,q_norm);
 multiq_plot_result(result_best_lm);
