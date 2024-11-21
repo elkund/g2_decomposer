@@ -138,12 +138,12 @@ custom_start_points = CustomStartPointSet(X0s');
 %% Run multistart
 % find the best solution given the start points in X0s
 
-[Xsol,fval,exitflag,output,all_solutions] = run(ms, prob,custom_start_points);
+[Xsol1,fval,exitflag,output,all_solutions] = run(ms, prob,custom_start_points);
 
 %% Show result
 
-result = multiq_compile_result(sample,series,Xsol,qs,delays,fit_eval_delays,s,T,fit_eval_T,w,q_deps,time_deps,g2s,g2errs,delay_norm,q_norm);
-multiq_plot_result(result);
+result_fixed_lm = multiq_compile_result(sample,series,Xsol1,qs,delays,fit_eval_delays,s,T,fit_eval_T,w,q_deps,time_deps,g2s,g2errs,delay_norm,q_norm);
+multiq_plot_result(result_fixed_lm);
 
 %% Start larger parallell pool
 
@@ -158,3 +158,9 @@ start_lm = 1E5; %starting value for lm.
 % Warning: This takes a LONG time. Start as many parallell workers as
 % possible.
 lm_search_result = multiq_lm_bisection_search(g2s,g2errs,X0s,T,s,w,lb,ub,Aeq,beq,options,start_lm,max_its);
+Xsol2 = lm_search_result.solutions(:,end);
+
+%% Compile and plot result
+
+result_best_lm = multiq_compile_result(sample,series,Xsol,qs,delays,fit_eval_delays,s,T,fit_eval_T,w,q_deps,time_deps,g2s,g2errs,delay_norm,q_norm);
+multiq_plot_result(result_best_lm);
