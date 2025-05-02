@@ -1,43 +1,40 @@
-function [out, grad] = obj_g2(T,w,X,g2s,g2errs,Q,N,s,M,L,lm)
-% out is the objective functoin to be minimized.
+function [out, grad] = obj_g2(T,X,g2_data,g2_error,Q,N,M,L,lm,w,D)
+% out is the objective function
 % grad is the objective gradient (not implemented yet)
 
-%regularizer
-REG = 0;
-if lm ~=0
-    %conditioning = median(s,'all');
-    for l=1:L
-        %some of this stuff doesn't need to be computed every time.
-         x=s(l,:);
-         w_sub = w(1+M*(l-1):M*l);
-         y = X(1+2*Q+M*(l-1):2*Q+M*l);
+% inputs: T is the design matrix, X is the solution, g2s is the data, g2errs
+% are the error bars, Q is the number of q bins, N is the number of delay
+% points, L is the number of dynamical components, lm is the regularizer
+% weight. w are the quadrature weights for regularizer integral.
+% Delta_matrix is a tridiagonal matrix used to compute the
+% second derivative.
 
-         dydx = diff(y)./diff(x)';
-         x1 = (x(1:end-1)+x(2:end))/2;
-         w2 = diff(x1);
-         d2ydx2 = diff(dydx)./w2';
 
-         %Computing the 2nd with central difference leads
-         %to possible jagged solutions; e.g. y=[1 0 1 0 1 0] gives small
-         % curvature at every point. Changed on 10.10.2024
-         %r = DGradient(DGradient(y,x,[],'1stOrder'),x,[],'1stOrder');%diff(diff(g(1+2*K+M*(l-1):2*K+M*l));
+% Regularizer
+second_diff = D*X(1+2*Q:end);
+REG = w*(second_diff.^2);
 
-         norm = w_sub*y;
-         if norm ~= 0
-             reg = w2*(d2ydx2.^2);
-             REG = REG + reg/norm;
-         end
-    end
-else
-    REG=0;
-end
-
-g2fits=g2_gen(X,f_gen(T,X,Q,N,M,L),Q);
+f_fits = f_gen(T,X,Q,N,M,L);
+g2_fits = g2_gen(X,f_fits,Q);
 
 % Output to be minimized.
-out = MSD(g2fits,g2s,g2errs)+lm*REG;
+devs = (g2_data-g2_fits)./g2_error;
+out = sum(devs.^2,'all') + lm*REG; 
+% out = RSS(g2fits,g2s,g2errs)+lm*REG;
 
-% TODO: compute objective gradient
-%i nargin>1 ??
-%   grad=?
+% Compute objective gradient when requested by solver. Using this seems to
+% often make results worse/convergence slower.
+if nargout>1
+   grad=zeros(2*Q+M*L,1);
+
+   devs_sigma2 = devs./g2_error;
+   %baseline gradientobj
+   grad(1:Q) = -2*sum(devs_sigma2,2);
+   %contrast gradient
+   grad(1+Q:2*Q) = -2*sum(devs_sigma2.*f_fits.^2,2);
+   %phi gradient (chi square)
+   grad(1+2*Q:end) = -4*squeeze(sum(devs_sigma2.*X(1+Q:2*Q).*f_fits.*permute(T,[1,3,2]),[1,2]));
+   %phi gradient (regularizer)
+   grad(1+2*Q:end) = grad(1+2*Q:end) + 2*lm*Delta_matrix'*(w'.*second_diff);
+end
 end

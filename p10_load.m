@@ -1,5 +1,5 @@
 function [qs,delays,g2s,g2errs,ttc,ttc_q] = p10_load(year,prop,sample,series,q_sel,t_sel)
-%Load g2s, and ttcs from P10 data
+%Load g2s, and ttcs from DESY P10 data
 % year, prop and series are int, sample is a char array, e.g., 'sample_name'
 % q_sel/t_sel are arrays of ints, e.g., [3 4 5]
 % set q_sel/t_sel to 0 to select all
@@ -22,7 +22,6 @@ end
 if q_sel == 0
     q_sel = 1:length(all_qs);
 end
-
 
 qs = double(all_qs(q_sel));
 g2s=g2s(q_sel,t_sel);

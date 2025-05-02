@@ -19,31 +19,40 @@ end
 
 result= struct();
 
-result.baseline_fits = baseline_fits;
-result.contrast_fits = contrast_fits;
-result.component_strengths = comp_strengths;
-result.components = components;
+result.L = L;
+result.M = M;
+result.Q = Q;
+result.N = N;
+
+result.baseline = baseline_fits;
+result.contrast = contrast_fits;
+result.component_strength = comp_strengths;
+result.component_dist = components;
 
 result.sample = sample;
 result.series = series;
-result.qs =qs;
+result.q_value =qs;
 result.s = s;
+result.w = w;
 result.T = T;
 result.fit_eval_T = fit_eval_T;
-result.q_deps = q_deps;
-result.time_deps = time_deps;
-result.g2s = g2s;
-result.g2errs = g2errs;
-result.delays = delays;
-result.fit_eval_delays = fit_eval_delays;
+result.q_powers = q_deps;
+result.t_powers = time_deps;
+result.g2 = g2s;
+result.g2_error = g2errs;
+result.t = delays;
+result.fit_eval_t = fit_eval_delays;
 result.q_norm = q_norm;
-result.delay_norm = delay_norm;
+result.t_norm = delay_norm;
 
-fit_eval_N = length(result.fit_eval_delays);
+fit_eval_N = length(result.fit_eval_t);
 
 f_eval_fits = f_gen(result.fit_eval_T,X,Q,fit_eval_N,M,L);
 g2_eval_fits = g2_gen(X,f_eval_fits,Q);
 
+g2_fits_rough = g2_gen(X,f_gen(result.T,X,Q,N,M,L),Q);
+
+result.g2_fits_rough = g2_fits_rough;
 result.g2_fits = g2_eval_fits;
 result.f_fits = f_eval_fits;
 
