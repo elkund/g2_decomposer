@@ -19,8 +19,7 @@ g2_fits = g2_gen(X,f_fits,Q);
 
 % Output to be minimized.
 devs = (g2_data-g2_fits)./g2_error;
-out = sum(devs.^2,'all') + lm*REG; 
-% out = RSS(g2fits,g2s,g2errs)+lm*REG;
+out = sum(devs.^2,'all') + lm*REG;
 
 % Compute objective gradient when requested by solver. Using this seems to
 % often make results worse/convergence slower.

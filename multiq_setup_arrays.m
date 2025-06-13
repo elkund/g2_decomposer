@@ -70,13 +70,15 @@ function [T,w_all,s_all,D] = multiq_setup_arrays(q_value,t,s_range,q_powers,t_po
         [sM,qM,tM] = meshgrid(s,qc,tc);
 
 
-        T(:,1+M*(l-1):M*l,:) = w.*exp(-qM.^q_powers(l).*tM.^t_powers(l).*sM);
+        T(:,1+M*(l-1):M*l,:) = w.*exp(-qM.^q_powers(l).*tM.^t_powers(l).*sM.^t_powers(l));
 
         w_all(1+(l-1)*M:M*l) = w;
         s_all(1+(l-1)*M:M*l) = s;
 
-        % Construct second difference matrix.
-        diff_s = diff(s)';
+        % Construct second difference matrix. The s vector is scaled by the
+        % t_power to make regularizer mmore balanced between components.
+        % YMMV
+        diff_s = diff(s)';%.^(1/t_powers(l)))';
         
         A = 1./diff_s(1:end-1).^2;
         B = -1./diff_s(1:end-1).*(1./diff_s(1:end-1)+1./diff_s(2:end));

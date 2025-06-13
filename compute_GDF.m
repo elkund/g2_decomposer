@@ -13,7 +13,6 @@ par_sols = zeros(2*Q+L*M,n_jobs); %temporary hold all solutions, including
 % "bad" guesses for every perturbation
 par_objvals = zeros(1,n_jobs);
 
-
 parfor k = 1:n_jobs
     [guess,pert] = ind2sub(par_iterations,k);
     obj_fun  = @(x)obj_g2(T,x,g2+perts(:,:,pert),g2_error,Q,N,M,L,lm,w,D);
@@ -30,6 +29,7 @@ parfor k = 1:n_jobs
         par_objvals(k) = inf;
     end
     
+    %disp('Finished job ' +string(k)+' of ' + string(n_jobs))
 end
 
 pert_responses = zeros(Q,N,1+n_perts);

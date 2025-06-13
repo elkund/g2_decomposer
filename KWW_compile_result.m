@@ -50,10 +50,17 @@ for l = 1:L
     hi = fminbnd(@(x) (1E-3*max_val - tmp_poll(x))^2,mode,1E4); %find hi bound
 
     x = logspace(log10(lo),log10(hi),M);
-    dxds = 1/(G(l)^t_powers(l));
-    s(l,:) = x / dxds;
-    y = tmp_poll(x)*dxds;
-    component_dist(:,l) = y;
+
+    %change variable to rate
+    s(l,:) = G(l)*x.^(1/t_powers(l));
+    dxds = t_powers(l)*s.^(t_powers(l)-1)/(G(l)^t_powers(l));
+    
+    y = tmp_poll(x).*dxds;
+
+    norm = trapz(s(l,:),y); % Normalization needed since we are missing a
+    % little bit of the pdf.
+
+    component_dist(:,l) = y/norm;
 end
 
 result= struct();

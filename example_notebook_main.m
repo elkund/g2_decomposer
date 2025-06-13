@@ -4,20 +4,21 @@
 % datasets.
 
 %%%%%%%%%
-% PRE2021 313 K
-%%%%%%%%%
+% Colloidal particles at 313 K
+%%%%%%%%
 load("example_data/PRE2021_313K.mat")
 % load("example_settings/PRE2021_313K_2comp.mat")
 load("example_settings/PRE2021_313K_1comp.mat")
 
+
 %%%%%%%%%
-% PRE2021 288 K
-%%%%%%%%
+% Colloidal partices at 288 K
+% %%%%%%%%
 % load("example_data/PRE2021_288K.mat");
 % load("example_settings/PRE2021_288K_2comp.mat");
 
 %%%%%%%%%
-% ASW at 125 K
+% Amorphous ice at 125 K
 %%%%%%%%%
 % load("example_data/ASW_125K.mat")
 % load("example_settings/ASW_125K.mat");
@@ -72,29 +73,27 @@ L = length(q_powers);   %number of components
 %                   lo 2, hi 2;
 %                   lo 3, hi 3;
 %                   ... ]
-% If q and t are normalized (next step), then s will be a dimensionless
-% integration vaiable.
 % s_range = % already set during load.
 
-% q and delay normalization. These numbers will be used to condidtion the
-% problem, e^(-s(q/q_norm)^q_power*(t/t_norm)^t_power).
+% q and delay normalization. These numbers will be used to normalize the
+% design matrix, e^(-(q/q_norm)^q_power*(s*t/t_norm)^t_power).
 q_norm = max(q_value);
 t_norm = max(t);
 
-% Set up arrays for integral evaluation.
+% Set up model arrays.
 % Weighted kernel values T, quadrature weights w, integrand evaluation
 % points s, differentitation matrix D (for regularizer)
 [T,w,s,D] = multiq_setup_arrays(q_value,t,s_range,q_powers,t_powers,M,'q_norm',q_norm,'t_norm',t_norm);
 
 % Set up another T array with more delay values. This is used to
-% display fit curves that extend beyond the data points, and can be higher
-% res (if fit_eval_N is large). We could also interpolate/extrapolate along
+% display extrapolated fit curves, and can be higher
+% res (if fit_eval_N is larger than N). We could also interpolate/extrapolate along
 % q by giving more q values.
 
 % Number of delay points in back-transformed results
 fit_eval_N=100;
 
-fit_eval_t = logspace(log10(t(1))-2,log10(t(end))+1,fit_eval_N); %extended delay vector
+fit_eval_t = logspace(log10(t(1))-1,log10(t(end))+1,fit_eval_N); %extended delay vector
 [fit_eval_T,~,~,~] = multiq_setup_arrays(q_value,fit_eval_t,s_range,q_powers,t_powers,M,'q_norm',q_norm,'t_norm',t_norm);
 
 %% Bounds and constraints on solution
@@ -123,7 +122,7 @@ beq = [1 0]'; %total = 1, boundaries = 0
 % Bounds on component values
 lb = zeros(2*Q+M*L,1); %Minimum is zero.
 ub = ones(2*Q+M*L,1);
-ub(2*Q+1:end) = 1./w; %every element contributes maximum area 1 to transformed function.
+ub(2*Q+1:end) = 1./w; %Every element contributes maximum area 1 to transformed function.
 
 % Bounds on baselines. We use the same number for every q, but per q values
 % can be supplied as well.
@@ -146,17 +145,17 @@ X0s = multiq_multistart_guess_gen(Q,M,n_start,L,w,lb,ub);
 % Local parallel pool.
 parpool(40);
 
-% On cluster
+% % On cluster
 % c = parcluster;
-
-%%%%%
-% On Maxwell, set up profile before. Instructions at:
-% https://confluence.desy.de/display/MXW/Getting-Started-with-Parallel-Computing-using-MATLAB-on-Maxwell_272733172.html
-%%%%%
-
-% Specific to DESY's Maxwell cluster
-% c.AdditionalProperties.QueueName = 'allcpu';
-% c.AdditionalProperties.WallTime = '05:00:00';
+% 
+% %%%%%
+% % On Maxwell, set up profile before. Instructions at:
+% % https://confluence.desy.de/display/MXW/Getting-Started-with-Parallel-Computing-using-MATLAB-on-Maxwell_272733172.html
+% %%%%%
+% 
+% % Specific to DESY's Maxwell cluster
+% c.AdditionalProperties.QueueName = 'exfel';
+% c.AdditionalProperties.WallTime = '08:00:00';
 % c.saveProfile
 % 
 % c.parpool(40);
@@ -167,10 +166,12 @@ parpool(40);
 %% Set up multistart solve with fixed regularizer weight
 
 % Objective function. Change lm to increase/decrease regularizer weight.
-lm= 1E9;%start_lm*1e2;
+lm = start_lm;
 %Starting at small lm gives an overfitted result. We will search for
 %optinal lm later. You can try different values to see the effect on the
 %result.
+
+% Objective function
 obj_fun  = @(x)obj_g2(T,x,g2,g2_error,Q,N,M,L,lm,w,D);
 
 % Create problem formulation
@@ -178,7 +179,7 @@ obj_fun  = @(x)obj_g2(T,x,g2,g2_error,Q,N,M,L,lm,w,D);
 % Optimization options
 options = optimoptions(@fmincon,'Display','off','SpecifyObjectiveGradient',false,'ScaleProblem',true,'Algorithm','sqp','MaxFunctionEvaluations',length(X0s(:,1))*1E3,'MaxIterations',max_opt_iterations);
 % Sqp alghorithm works well. Specify objective gradient seems to make most
-% things worse. Perhaps there is a mistake in the gradient implementation?
+% things worse.
 % Scale problem helps, even though we normalized q and t.
 
 prob = createOptimProblem('fmincon','objective',obj_fun,'x0',X0s(:,1),'lb',lb,'ub',ub,'Aeq',Aeq,'beq',beq,'options',options);
@@ -197,7 +198,7 @@ tic
 toc
 %% Show result
 transform_s = 1; %set to 0 to plot solution against dimless param s.
-% Set to 1 to do a change of variable to velocity/Diffusivity
+% Set to 1 to convert to input units.
 
 % compile solution as human-readable struct
 result_fixed_lm = multiq_compile_result(sample,series,Xsol1,q_value,t,fit_eval_t,s,T,fit_eval_T,w,q_powers,t_powers,g2,g2_error,t_norm,q_norm);
@@ -223,11 +224,12 @@ multiq_plot_result(result_fixed_lm,transform_s);
 % max_opt_iterations or find better initial guesses.
 %%%%%
 
-n_perts = fix(N*Q/4); %This number is a compromise. n_perts>N*Q is ideal,
+n_perts = 50;%fix(N*Q/4); %This number is a compromise. n_perts>N*Q is ideal,
 % but may take a long time to compute.
 
 tic
 
+disp('Computing DOF. Please wait.')
 [p_0, chisq_0,sol_0] = compute_GDF(g2,g2_error,X0s,prob,Q,N,M,L,T,w,n_perts,D,start_lm);
 
 toc
@@ -243,17 +245,17 @@ toc
 
 %% Plot result from binary search
 
-transform_s=1; %set to 1 to perform a change of variables s-> velocity/diffusivity etc.
+transform_s=1; %set to 1 to plot s in data units (velocity/diffusivity etc.)
 
-result_best_lm = multiq_compile_result(sample,series,search_sols(:,end-3),q_value,t,fit_eval_t,s,T,fit_eval_T,w,q_powers,t_powers,g2,g2_error,t_norm,q_norm);
+result_best_lm = multiq_compile_result(sample,series,search_sols(:,end),q_value,t,fit_eval_t,s,T,fit_eval_T,w,q_powers,t_powers,g2,g2_error,t_norm,q_norm);
 
 multiq_plot_result(result_best_lm,transform_s);
 
-%%
+%% collect search results in struct
 
 search_result = struct();
 search_result.lm = search_lm;
 search_result.sols = search_sols;
 search_result.chisq = search_chisq;
 search_result.P = search_P;
-
+ 

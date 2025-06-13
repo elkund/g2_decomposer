@@ -93,13 +93,15 @@ for l=1:L
     tau0=result.t_norm;
 
     if transform_s == 1
-        x = (result.s(1+M*(l-1):M*l)/(q0^result.q_powers(l))).^(1/result.t_powers(l))'/tau0;
-        dsdx = q0^result.q_powers(l)*tau0^result.t_powers(l)*result.t_powers(l)*x.^(result.t_powers(l)-1);
+        x = result.s(1+M*(l-1):M*l)/(q0^(result.q_powers(l)/result.t_powers(l))*tau0);
+        %dsdx = q0^result.q_powers(l)*tau0^result.t_powers(l)*result.t_powers(l)*x.^(result.t_powers(l)-1);
+        dsdx=q0^(result.q_powers(l)/result.t_powers(l))*tau0;
         y= dsdx.*result.component_dist(:,l);
+        %y = result.w(1+M*(l-1):M*l)'.*result.component_dist(:,l);
         xlab = x_labels(label_keys(l));
     else
         x = result.s(1+M*(l-1):M*l);
-        y=result.component_dist(:,l);
+        y = result.component_dist(:,l);
         xlab = 's';
     end
 

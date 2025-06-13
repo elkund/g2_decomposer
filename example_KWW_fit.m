@@ -81,5 +81,5 @@ KWW_result = KWW_compile_result(sample,series,sol,q_value,t,q_powers,q_norm,t_no
 % Computing the pollard distriution involves a numerical integral. This may
 % produce some warnings, but usually works.
 
-transform_s=1;
+transform_s=0;
 multiq_plot_result(KWW_result,transform_s);

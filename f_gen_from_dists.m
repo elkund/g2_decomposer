@@ -11,15 +11,15 @@ for l=1:L
 
     init=dist.median;
 
-    l_prctl = fzero( @(x) cdf(dist,x)-1E-4,init); %Find the first percentile
-    h_prctl = fzero( @(x) cdf(dist,x)-0.9999,init); %Find the 99th percentile
+    l_prctl = fzero( @(x) cdf(dist,x)-1E-4,init); %Find lower limit
+    h_prctl = fzero( @(x) cdf(dist,x)-0.9999,init); %Find upper limit
     dist_x = logspace(log10(l_prctl),log10(h_prctl),dist_Nx);
 
     dist_y = pdf(dist,dist_x);
-    norm = trapz(dist_x,dist_y); % Normalization needed since we are missing the top and bottom 1 %.
+    norm = trapz(dist_x,dist_y); % Normalization needed since we are missing part of the pdf
 
 
-    trapz_y = dist_y'.*exp(-dist_x'.*reshape(qs.^q_deps(l)'.*taus.^time_deps(l),1,Q,N));
+    trapz_y = dist_y'.*exp(-(dist_x').^time_deps(l).*reshape(qs.^q_deps(l)'.*taus.^time_deps(l),1,Q,N));
     f_out = f_out + dist_amplitudes(l)*squeeze(trapz(dist_x,trapz_y))/norm;
 end
 
