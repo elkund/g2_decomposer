@@ -1,13 +1,25 @@
 # This CITATION.cff file was generated with cffinit.
 # Visit https://bit.ly/cffinit to generate yours today!
 
+
 cff-version: 1.2.0
-title: g2 decomposer
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
-type: software
+message: "If you use this software, please cite it as below."
 authors:
-  - given-names: Tobias
-    family-names: Eklund
-    email: tobias.h.e.eklund@gmail.com
+- family-names: "Eklund"
+  given-names: "Tobias"
+  orcid: "https://orcid.org/0000-0002-5851-3939"
+  email: "tobias.h.e.ekund@gmail.com"
+- family-names: "Tonauer"
+  given-names: "Christina M."
+  orcid: "https://orcid.org/0000-0001-6859-5344"
+- family-names: "Lehmkühler"
+  given-names: "Felix"
+  orcid: "https://orcid.org/0000-0003-1289-995X"
+- family-names: "Amann-Winkel"
+  given-names: "Katrin"
+  orcid: "https://orcid.org/0000-0002-7319-7807"
+title: "g2 decomposer"
+version: 1.0.1
+doi: 10.5281/zenodo.16086913
+date-released: 2025-07-18
+url: "https://github.com/elkund/g2_decomposer"
