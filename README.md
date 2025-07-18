@@ -5,7 +5,7 @@ g2 correlation functions (squared linear combination of decaying modes).
 For example usage, see "example_notebook_main.m".
 
 Also includes scripts for fitting probability density functions, and KWW
-functions in the MULTIQ-fashion ("example_dist_fit.m", "example_KWW.m").
+functions in the MULTIQ fashion ("example_dist_fit.m", "example_KWW.m").
 
 This software is partially based on previous work by
 François Liénard and Iari-Gabriel Marino.
