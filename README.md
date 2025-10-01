@@ -1,5 +1,5 @@
 # g2_decomposer
-Matlab implementation of inverse transforms (sim. CONTIN MULTIQ) applied to g2 correlation functions (squared linear combination of decaying modes). see [arxiv.org/abs/2507.14106](https://arxiv.org/abs/2507.14106) for details. The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
+Matlab implementation of inverse transforms (sim. CONTIN MULTIQ) applied to g2 correlation functions (squared linear combination of decaying modes), see [arxiv.org/abs/2507.14106](https://arxiv.org/abs/2507.14106) for details. The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
 
 ![Analys result](screenshot.png?raw=true)
 
