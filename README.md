@@ -7,7 +7,7 @@ Matlab implementation of inverse transforms (sim. CONTIN MULTIQ) applied to g2 c
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Photon Science Article ASAP<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DOI: [10.1021/photonsci.5c00014](https://pubs.acs.org/doi/10.1021/photonsci.5c00014)<br>
 
-for details (or the [arXiv preprint](https://doi.org/10.48550/arXiv.2507.14106). The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
+for details (or the [arXiv preprint](https://doi.org/10.48550/arXiv.2507.14106)). The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
 
 ![Analys result](screenshot.png?raw=true)
 
