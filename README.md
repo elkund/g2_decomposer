@@ -1,5 +1,13 @@
 # g2_decomposer
-Matlab implementation of inverse transforms (sim. CONTIN MULTIQ) applied to g2 correlation functions (squared linear combination of decaying modes), see [arxiv.org/abs/2507.14106](https://arxiv.org/abs/2507.14106) for details. The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
+Matlab implementation of inverse transforms (sim. CONTIN MULTIQ) applied to g2 correlation functions (squared linear combination of decaying modes), see our publication 
+
+*Global q-Dependent Inverse Transforms of Intensity Autocorrelation Data*
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TTobias Eklund, Christina M. Tonauer, Felix &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TLehmkühler, and Katrin Amann-Winkel
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TPhoton Science Article ASAP
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TDOI: [10.1021/photonsci.5c00014](https://pubs.acs.org/doi/10.1021/photonsci.5c00014)
+
+for details (or the [arXiv preprint](https://doi.org/10.48550/arXiv.2507.14106). The analysis outputs a decomposition like the below screenshot. For example usage, see "example_notebook_main.m".
 
 ![Analys result](screenshot.png?raw=true)
 
